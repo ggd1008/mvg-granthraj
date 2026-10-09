@@ -1,7 +1,7 @@
 /* MVG Granthraj service worker: simple cache-first.
    Experimental seva project, respect privacy terms, no illegal.
-   When you upload a new index.html, raise the number below (v2 -> v3) so phones fetch the new copy. */
-const CACHE='mvg-granthraj-v2';
+   When you upload a new index.html, raise the number below (v3 -> v4) so phones fetch the new copy. */
+const CACHE='mvg-granthraj-v3';
 const FILES=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(CACHE).then(c=>Promise.all(FILES.map(f=>c.add(f).catch(()=>{})))).then(()=>self.skipWaiting()));

@@ -1,16 +1,32 @@
-MVG Granthraj Chat - hosting kit, version 2
+MVG Granthraj Chat - hosting kit, version 2.1
 Experimental seva project, respect privacy terms, no illegal.
 Jai Srila Prabhupada ki Jai!
 
-UPLOAD
-Put these 5 files together in one folder on an https site (for example Hostinger public_html/granthraj/):
+FILES
   index.html              the app (172 lectures inside)
-  sw.js                   service worker, cache-first, cache name mvg-granthraj-v2
+  sw.js                   service worker, cache-first, cache name mvg-granthraj-v3
   manifest.webmanifest    app name, colours, icons
-  icon-192.png, icon-512.png   lotus icons (kept as lotus; Maharaj's photo is used inside the app only)
-Open the folder address once on the phone while online. After that the app opens offline and the
-browser offers "Install app" / "Add to Home screen".
-Updating: when you replace index.html, open sw.js and raise v2 to v3 so phones download the new copy.
+  icon-192.png, icon-512.png   lotus icons
+  api/chat.js             server function for AI replies (runs on Vercel)
+  vercel.json             gives that function up to 60 seconds
+The site is deployed by Vercel from the GitHub repository; every commit to main redeploys it.
+Updating: when index.html changes, raise v3 to v4 in sw.js in the same commit so phones download the new copy.
+
+AI REPLIES (version 2.1)
+  The API key is no longer typed into the app. It is kept on the server:
+    Vercel > project mvg-granthraj > Settings > Environment Variables
+      OPENROUTER_API_KEY   required   the key from openrouter.ai
+      AI_MODEL             optional   default google/gemma-4-31b-it:free
+      AI_FALLBACK_MODEL    optional   default nvidia/nemotron-3-super-120b-a12b:free
+      AI_BASE_URL          optional   default https://openrouter.ai/api/v1 (any OpenAI-style service works)
+  After adding or changing a variable, redeploy once (Deployments > latest > Redeploy).
+  The app sends the question and a few matching lecture passages to api/chat.js. The sevak rules live
+  in that file: no speaking as Maharaj, only the given passages, no added verses, Srila Prabhupada and
+  Maharaj never mixed, no greeting, plain text. A reply that is empty or only a safety label is thrown
+  away and the second model is tried. If both fail, the app shows the lecture passages instead.
+  Settings now has one switch, "AI replies: On / Off", in place of the address, key and model boxes.
+  Without the key, without internet, or on a host without this function, the app answers from the
+  lectures alone, as before.
 
 CHANGELOG, VERSION 2
 
@@ -72,18 +88,6 @@ NEW FEATURES
      lectures; users on this device; hosting-kit downloads; erase everything. The PIN only hides the panel.
      It is not real security, because everything lives in the browser.
   5. Prepare notes: the Notes button under an answer. Choose up to five lectures, pick Notes, Article or
-     List, and write what it is for. With an API set, the request and the chosen passages are sent to it.
-     Without an API the notes are Maharaj's own passages. Export as PDF or Word, or add to chat and bookmark.
-     API: any address ending in /v1 is called in the OpenAI style with the model name from Settings.
+     List, and write what it is for. With AI replies on, the request and the chosen passages are sent to the AI service.
+     Otherwise the notes are Maharaj's own passages. Export as PDF or Word, or add to chat and bookmark.
   6. Links to ISKCON Rajkot, Granthraj and Media Hub on the main screen and in Settings.
-
-PHOTO SIZES
-  Used now (made from the three photos received):
-    header logo and quote photo   160 x 160 px, from the transparent picture (original only 120 x 80)
-    main and login photo          288 x 288 px, face crop from the lecture picture
-    gallery                       720 x 478 px and 324 x 420 px
-  For sharper results please send:
-    header logo                   square, at least 256 x 256 px, face centred, transparent or plain background
-    main photo                    square, at least 512 x 512 px
-    gallery (3 or 4 photos)       at least 1200 px on the long side, JPG
-    poster photo                  square, at least 600 x 600 px
