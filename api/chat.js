@@ -63,25 +63,61 @@ async function ask(model, messages, maxTokens, ms) {
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + process.env.OPENROUTER_API_KEY, 'X-Title': 'MVG Granthraj' },
       body: JSON.stringify({ model, messages, temperature: 0.2, max_tokens: maxTokens })
     });
-    if (!r.ok) return { status: r.status, text: '' };
     const j = await r.json().catch(() => null);
+    if (!r.ok || (j && j.error && !j.choices)) {
+      const e = j && j.error;
+      return { status: r.ok ? ((e && +e.code) || 502) : r.status, text: '', err: clean(e && (e.message || e), 300) };
+    }
     const c = j && j.choices && j.choices[0];
     const text = (c && ((c.message && c.message.content) || c.text)) || '';
     return { status: 200, text: typeof text === 'string' ? text : '', model: (j && j.model) || model };
   } catch (e) {
-    return { status: 504, text: '' };
+    return { status: 504, text: '', err: 'timeout or network: ' + clean(e && e.message, 120) };
   } finally { clearTimeout(timer); }
+}
+
+const note = (what, model, out) => console.log('ai ' + JSON.stringify({ what, model, status: out.status, chars: out.text.length, err: out.err || undefined }));
+
+/* some hosted models refuse a system message: then the rules travel inside the user message */
+async function askModel(model, messages, maxTokens, ms, what) {
+  let out = await ask(model, messages, maxTokens, ms);
+  note(what, model, out);
+  if (out.status === 400 && /system|developer instruction/i.test(out.err || '')) {
+    out = await ask(model, [{ role: 'user', content: messages[0].content + '\n\n' + messages[1].content }], maxTokens, ms);
+    note(what + ' (rules in user message)', model, out);
+  }
+  return out;
+}
+
+/* GET /api/chat?check=1 : a small self-test, to see whether the key and the two models answer.
+   It shows status codes and the service's own error text only. The result is kept for ten minutes. */
+let CHECK = null;
+async function selfTest() {
+  if (CHECK && Date.now() - CHECK.at < 6e5) return Object.assign({ cached: true }, CHECK);
+  const msgs = [{ role: 'system', content: 'Reply with the single word: ready' }, { role: 'user', content: 'Are you ready?' }];
+  const one = async model => { const o = await askModel(model, msgs, 20, 20000, 'check'); return { model, status: o.status, reply: clean(o.text, 60), error: o.err || undefined }; };
+  const [primary, fallback] = await Promise.all([one(MODEL), one(FALLBACK)]);
+  CHECK = { at: Date.now(), keySet: true, base: BASE, primary, fallback };
+  return CHECK;
 }
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
+  if (req.method === 'GET' && /[?&]check=1\b/.test(req.url || '')) {
+    if (!process.env.OPENROUTER_API_KEY) return res.status(200).json({ keySet: false });
+    return res.status(200).json(await selfTest());
+  }
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
   if (!process.env.OPENROUTER_API_KEY) return res.status(200).json({ off: true });               // no key yet: the app quietly uses the lectures
 
   // only this site's own pages may call the function
   let origin = '';
   try { origin = new URL(req.headers.origin || '').host; } catch (e) {}
-  if (!origin || origin !== req.headers.host) return res.status(403).json({ error: 'forbidden' });
+  const host = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim();
+  if (!origin || (origin !== host && origin !== req.headers.host)) {
+    console.log('ai ' + JSON.stringify({ what: 'refused origin', origin, host }));
+    return res.status(403).json({ error: 'forbidden' });
+  }
 
   const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
   if (limited(ip)) return res.status(200).json({ busy: true });
@@ -107,10 +143,10 @@ module.exports = async (req, res) => {
   const messages = [{ role: 'system', content: RULES }, { role: 'user', content: user }];
   const maxTokens = task === 'chat' ? 450 : 900;
 
-  let out = await ask(MODEL, messages, maxTokens, 26000);
+  let out = await askModel(MODEL, messages, maxTokens, 24000, task);
   if (out.status !== 200 || useless(out.text)) {
     const first = out.status;
-    out = await ask(FALLBACK, messages, maxTokens, 26000);
+    out = await askModel(FALLBACK, messages, maxTokens, 24000, task + ' fallback');
     if (out.status !== 200 || useless(out.text)) {
       // daily limit reached, or no usable reply: the app shows the lecture passages with a short note
       return res.status(200).json({ busy: true, reason: (first === 429 || out.status === 429) ? 'limit' : 'no reply' });
