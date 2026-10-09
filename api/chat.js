@@ -12,7 +12,7 @@
    Self-test: open /api/chat?check=1 in a browser to see whether the key and the models answer. */
 
 const BASE = (process.env.AI_BASE_URL || 'https://openrouter.ai/api/v1').replace(/\/+$/, '');
-const DEFAULT_MODELS = ['nvidia/nemotron-3-super-120b-a12b:free', 'google/gemma-4-31b-it:free', 'google/gemma-4-26b-a4b-it:free'];
+const DEFAULT_MODELS = ['nvidia/nemotron-3-super-120b-a12b:free', 'google/gemma-4-26b-a4b-it:free', 'thinkingmachines/inkling:free'];
 const MODELS = (() => {
   const list = [process.env.AI_MODEL || DEFAULT_MODELS[0]]
     .concat(process.env.AI_FALLBACK_MODEL ? process.env.AI_FALLBACK_MODEL.split(',') : DEFAULT_MODELS.slice(1))
@@ -46,7 +46,7 @@ const HITS = new Map();
 function limited(ip) {
   const now = Date.now(), list = (HITS.get(ip) || []).filter(t => now - t < 864e5);
   const lastMinute = list.filter(t => now - t < 6e4).length;
-  if (lastMinute >= 8 || list.length >= 80) { HITS.set(ip, list); return true; }
+  if (lastMinute >= 12 || list.length >= 200) { HITS.set(ip, list); return true; }
   list.push(now); HITS.set(ip, list);
   if (HITS.size > 5000) HITS.clear();
   return false;
