@@ -12,7 +12,8 @@
    Self-test: open /api/chat?check=1 in a browser to see whether the key and the models answer. */
 
 const BASE = (process.env.AI_BASE_URL || 'https://openrouter.ai/api/v1').replace(/\/+$/, '');
-const DEFAULT_MODELS = ['nvidia/nemotron-3-super-120b-a12b:free', 'google/gemma-4-26b-a4b-it:free', 'thinkingmachines/inkling:free'];
+/* tried on 9 Oct 2026 with the self-test: the first two answered in about a second and kept to the passages; the Gemma free models were often refused as busy */
+const DEFAULT_MODELS = ['nvidia/nemotron-3-super-120b-a12b:free', 'poolside/laguna-xs-2.1:free', 'google/gemma-4-26b-a4b-it:free'];
 const MODELS = (() => {
   const list = [process.env.AI_MODEL || DEFAULT_MODELS[0]]
     .concat(process.env.AI_FALLBACK_MODEL ? process.env.AI_FALLBACK_MODEL.split(',') : DEFAULT_MODELS.slice(1))

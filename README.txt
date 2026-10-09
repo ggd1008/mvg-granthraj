@@ -4,13 +4,13 @@ Jai Srila Prabhupada ki Jai!
 
 FILES
   index.html              the app (172 lectures inside)
-  sw.js                   service worker, cache-first, cache name mvg-granthraj-v4
+  sw.js                   service worker, cache-first, cache name mvg-granthraj-v5
   manifest.webmanifest    app name (MVG Vani), colours, icons
   icon-192.png, icon-512.png   lotus icons
   api/chat.js             server function for AI replies (runs on Vercel)
   vercel.json             gives that function up to 60 seconds
 The site is deployed by Vercel from the GitHub repository; every commit to main redeploys it.
-Updating: when index.html changes, raise v4 to v5 in sw.js in the same commit so phones download the new copy.
+Updating: when index.html changes, raise v5 to v6 in sw.js in the same commit so phones download the new copy.
 The web address, the repository name and the storage keys still say "mvg-granthraj"; changing them would
 break the shared link and the data saved on phones.
 
@@ -22,7 +22,7 @@ AI REPLIES
       AI_FALLBACK_MODEL    optional   one or more models tried next, separated by commas
       AI_BASE_URL          optional   default https://openrouter.ai/api/v1 (any OpenAI-style service works)
   After adding or changing a variable, redeploy once (Deployments > latest > Redeploy).
-  Default order: nvidia/nemotron-3-super-120b-a12b:free, google/gemma-4-26b-a4b-it:free, thinkingmachines/inkling:free.
+  Default order: nvidia/nemotron-3-super-120b-a12b:free, poolside/laguna-xs-2.1:free, google/gemma-4-26b-a4b-it:free.
   Self-test: open /api/chat?check=1 in a browser. It shows, for each model, the status, the time taken and a
   sample reply. Each check uses a few of the day's free replies.
   The app sends the question and a few matching lecture passages to api/chat.js. The sevak rules live
