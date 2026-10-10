@@ -445,7 +445,7 @@ en:{brand:'MVG Vani',sub:'Maharaj’s vani, at your service',
  b_empty:'No bookmarks yet. Tap Save under any answer.',you:'You',
  n_q:'Start a new chat? Bookmarked answers stay saved.',
  p_title:'Poster for devotees',p_text:'Maharaj’s words on the poster',p_sq:'Square',p_st:'Story',p_bn:'Banner',p_dl:'Download PNG',p_share:'Share',p_pass:'Passage',p_empty:'Write some text for the poster.',p_size:'Size',p_fill:'Fill with',p_photo:'Maharaj’s photo on top',p_photo_on:'Photo on',p_photo_off:'Photo off',
- l_search:'Search title, verse or place',l_f_all:'All',l_f_sb:'Srimad Bhagavatam',l_f_bg:'Bhagavad-gita',l_f_raj:'Rajkot',l_f_abr:'Other places',rd_poster:'Poster from this lecture',s_backup:'Backup',bk_save:'Save backup',bk_restore:'Restore backup',bk_help:'Saves notes, bookmarks, reading and sadhana progress on this phone as one file. Login details and the AI key are not included. Restoring replaces these items on this phone.',bk_done:'Backup saved.',aud_play:'Play',aud_pause:'Pause',aud_back:'Back 15 seconds',aud_fwd:'Forward 15 seconds',aud_err:'Could not play. Check the internet connection.',aud_title:'Lecture audio',aud_help:'Plays the recording from Dropbox. Needs internet. Your place is remembered on this phone.',rm_title:'Daily sadhana reminder, 8:00 AM',rm_btn_on:'Turn on reminder',rm_btn_off:'Turn off reminder',rm_on:'Reminder is on. You will get it every morning.',rm_off:'Reminder is off.',rm_no:'Reminder is not available here. Install the app on the Home Screen and allow notifications, then try again.',rm_denied:'Notifications are blocked. Allow them in phone settings for this app.',rm_help:'Works once the app is installed and notifications are allowed. Only a notification subscription is stored on the server, with no name or mobile number.',bk_ok:'Backup restored. Reloading.',bk_bad:'This file is not an MVG Vani backup.',bk_q:'Restore this backup? Current notes, bookmarks and progress on this phone will be replaced.',l_none:'No lecture matches.',rd_listen:'Listen from here',
+ l_search:'Search title, verse or place',l_f_all:'All',l_f_aud:'With audio',l_f_sb:'Srimad Bhagavatam',l_f_bg:'Bhagavad-gita',l_f_raj:'Rajkot',l_f_abr:'Other places',rd_poster:'Poster from this lecture',s_backup:'Backup',bk_save:'Save backup',bk_restore:'Restore backup',bk_help:'Saves notes, bookmarks, reading and sadhana progress on this phone as one file. Login details and the AI key are not included. Restoring replaces these items on this phone.',bk_done:'Backup saved.',aud_play:'Play',aud_pause:'Pause',aud_back:'Back 15 seconds',aud_fwd:'Forward 15 seconds',aud_err:'Could not play. Check the internet connection.',aud_title:'Lecture audio',aud_help:'Plays the recording from Dropbox. Needs internet. Your place is remembered on this phone.',rm_title:'Daily sadhana reminder, 8:00 AM',rm_btn_on:'Turn on reminder',rm_btn_off:'Turn off reminder',rm_on:'Reminder is on. You will get it every morning.',rm_off:'Reminder is off.',rm_no:'Reminder is not available here. Install the app on the Home Screen and allow notifications, then try again.',rm_denied:'Notifications are blocked. Allow them in phone settings for this app.',rm_help:'Works once the app is installed and notifications are allowed. Only a notification subscription is stored on the server, with no name or mobile number.',bk_ok:'Backup restored. Reloading.',bk_bad:'This file is not an MVG Vani backup.',bk_q:'Restore this backup? Current notes, bookmarks and progress on this phone will be replaced.',l_none:'No lecture matches.',rd_listen:'Listen from here',
  x_title:'MVG Vani chat',dl_ok:'Downloaded',dl_fail:'This browser blocked the download.',
  lg_h:'Hare Krishna 🙏',lg_sub:'MVG Vani: the lectures of His Holiness Mahavishnu Goswami Maharaj',
  lg_m:'Mobile number',lg_next:'Continue',lg_priv:'Your number is kept only on this device.',
@@ -471,7 +471,7 @@ en:{brand:'MVG Vani',sub:'Maharaj’s vani, at your service',
  ai_unver:'Some words in quotation marks in the AI reply could not be matched with the lecture passages. Please go by Maharaj’s own words below.',
  p_none:'A poster carries only Maharaj’s own words, and this reply has no lecture passage.',
  n_again:'Prepare again',
- e_menu:'Daily menu',e_today:'Today’s lecture',e_plan:'Reading plan',e_sadhana:'Sadhana',e_notes:'My notes',e_marks:'Bookmarks',e_lib:'All lectures',
+ e_menu:'Daily menu',e_today:'Today’s lecture',e_plan:'Reading plan',e_sadhana:'Sadhana',e_notes:'My notes',e_marks:'Bookmarks',e_lib:'All lectures',e_audio:'Lecture audio',
  sd_title:'Sadhana tracker',sd_rounds:'Rounds chanted today',sd_of:'of 16 rounds',sd_less:'One round less',sd_more:'One round more',sd_16:'All 16 done',sd_zero:'Start again',
  sd_today:'Today',sd_a:'Mangala arati',sd_b:'Read Srimad Bhagavatam',sd_h:'Heard a lecture',sd_week:'Last 7 days',sd_help:'Each day shows the rounds and how many of the three items were done. Kept only on this device.',
  pl_title:'Reading plan',pl_count:'{d} of {n} lectures read',pl_next:'Next lecture',pl_after:'After that',pl_read:'Read now',pl_mark:'Mark as read',pl_isread:'Read',pl_marked:'Marked as read',pl_unmarked:'Marked as not read',
@@ -1025,12 +1025,12 @@ function openMarks(){
       return `<div class="bk"><div class="bq">${q?esc(t('you'))+': '+esc(q):''}<small>${new Date(hist[i].ts).toLocaleString(lang+'-IN',{dateStyle:'medium',timeStyle:'short',hourCycle:'h23'})}</small></div>${msgHTML(hist[i],i)}</div>`}).join('')}});
 }
 /* library and reader */
-const LFS=[['all','l_f_all'],['sb','l_f_sb'],['bg','l_f_bg'],['raj','l_f_raj'],['abr','l_f_abr']];
+const LFS=[['all','l_f_all'],['aud','l_f_aud'],['sb','l_f_sb'],['bg','l_f_bg'],['raj','l_f_raj'],['abr','l_f_abr']];
 let LF='all';
 const scrip=d=>String(d.v||'').split(' ')[0];
 /* Verse search: "1.6.26", "SB 1.6.26" or "BG 2.47" match the lecture's main verse and every verse it quotes. Words search title, verse and place. */
 function libPass(d,q){
-  const f=LF==='sb'?scrip(d)==='SB':LF==='bg'?[d.v].concat(d.k||[]).some(x=>/^BG /.test(String(x))):LF==='raj'?d.l==='Rajkot':LF==='abr'?d.l!=='Rajkot':true;
+  const f=LF==='aud'?!!AUDIO[d.t]:LF==='sb'?scrip(d)==='SB':LF==='bg'?[d.v].concat(d.k||[]).some(x=>/^BG /.test(String(x))):LF==='raj'?d.l==='Rajkot':LF==='abr'?d.l!=='Rajkot':true;
   if(!f)return false;
   const n=norm(q||'').replace(/\s+/g,' ').trim();
   if(!n)return true;
@@ -1348,6 +1348,7 @@ const ACT={
  theme:()=>{const dark=document.documentElement.dataset.theme?document.documentElement.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;SV('mvg_theme',dark?'light':'dark');applyTheme()},
  lfilt:b=>{LF=b.dataset.v;$('#libF').innerHTML=lfChips();$('#libL').innerHTML=libList($('#libQ').value)},
  lecpost:()=>openLecPoster(RD.li),
+ audlib:()=>{LF='aud';openLibrary()},
  ...AUDACT, ...FESTACT,
  remindon:remindOn, remindoff:remindOff,
  bkdl:backupDownload, bkup:backupPick,
@@ -1654,7 +1655,7 @@ document.addEventListener('submit',e=>{const f=e.target;if(f&&f.dataset&&f.datas
 const dk=d=>{d=d||new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
 const obj=k=>{const o=LS(k,{});return o&&typeof o==='object'&&!Array.isArray(o)?o:{}};
 const fmtDate=ts=>new Date(ts).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short',hourCycle:'h23'});
-const EDGE=[['today','book','e_today'],['plan','cal','e_plan'],['sadhana','check','e_sadhana'],['mynotes','pen','e_notes'],['marks','mark','e_marks'],['lib','list','e_lib']];
+const EDGE=[['today','book','e_today'],['plan','cal','e_plan'],['sadhana','check','e_sadhana'],['mynotes','pen','e_notes'],['marks','mark','e_marks'],['lib','list','e_lib'],['audlib','play','e_audio']];
 function edgeOpen(on){
   const p=$('#edgeP');p.hidden=!on;$('#edge').setAttribute('aria-expanded',on);
   if(on){$('#edgeN').innerHTML=EDGE.map(([a,i,l])=>`<button class="ei" data-act="${a}" data-edge="1"><i>${ic(i)}</i><span>${esc(t(l))}</span></button>`).join('');$('#edgeN button').focus()}
