@@ -1,7 +1,7 @@
 /* MVG Vani service worker: simple cache-first.
    Experimental seva project, respect privacy terms, no illegal.
    When you upload a new index.html, raise the number below (v5 -> v6) so phones fetch the new copy. */
-const CACHE='mvg-granthraj-v5';
+const CACHE='mvg-granthraj-v6';
 const FILES=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(CACHE).then(c=>Promise.all(FILES.map(f=>c.add(f).catch(()=>{})))).then(()=>self.skipWaiting()));
@@ -17,4 +17,18 @@ self.addEventListener('fetch',e=>{
     if(res&&res.ok){const copy=res.clone();caches.open(CACHE).then(c=>c.put(r,copy));}
     return res;
   }).catch(()=>caches.match('index.html'))));
+});
+
+/* Sadhana reminder: show the notification, and open the app when it is tapped. */
+self.addEventListener('push', e => {
+  let d = {};
+  try { d = e.data.json(); } catch (x) {}
+  e.waitUntil(self.registration.showNotification(d.title || 'MVG Vani', { body: d.body || '', icon: 'icon-192.png', badge: 'icon-192.png', tag: 'sadhana', data: { url: d.url || './' } }));
+});
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(clients.matchAll({ type: 'window' }).then(list => {
+    for (const c of list) { if ('focus' in c) return c.focus(); }
+    return clients.openWindow(e.notification.data.url || './');
+  }));
 });
