@@ -244,6 +244,7 @@ a.pill{text-decoration:none;color:var(--t)}
   #print .pf{margin-top:18pt;border-top:1px solid #FF9933;padding-top:6pt;font-size:9pt;color:#555}
   @page{margin:16mm}
 }
+.chk{display:flex;gap:10px;align-items:center;margin:10px 0;font-weight:600}.chk input{width:22px;height:22px}.fest .in{margin:6px 0 10px}.aud .seg{margin-top:8px}
 </style>
 </head>
 <body>
@@ -444,7 +445,7 @@ en:{brand:'MVG Vani',sub:'Maharaj’s vani, at your service',
  b_empty:'No bookmarks yet. Tap Save under any answer.',you:'You',
  n_q:'Start a new chat? Bookmarked answers stay saved.',
  p_title:'Poster for devotees',p_text:'Maharaj’s words on the poster',p_sq:'Square',p_st:'Story',p_bn:'Banner',p_dl:'Download PNG',p_share:'Share',p_pass:'Passage',p_empty:'Write some text for the poster.',p_size:'Size',p_fill:'Fill with',p_photo:'Maharaj’s photo on top',p_photo_on:'Photo on',p_photo_off:'Photo off',
- l_search:'Search title, verse or place',l_f_all:'All',l_f_sb:'Srimad Bhagavatam',l_f_bg:'Bhagavad-gita',l_f_raj:'Rajkot',l_f_abr:'Other places',rd_poster:'Poster from this lecture',s_backup:'Backup',bk_save:'Save backup',bk_restore:'Restore backup',bk_help:'Saves notes, bookmarks, reading and sadhana progress on this phone as one file. Login details and the AI key are not included. Restoring replaces these items on this phone.',bk_done:'Backup saved.',aud_title:'Lecture audio',aud_help:'Plays the recording from Dropbox. Needs internet.',rm_title:'Daily sadhana reminder, 8:00 AM',rm_btn_on:'Turn on reminder',rm_btn_off:'Turn off reminder',rm_on:'Reminder is on. You will get it every morning.',rm_off:'Reminder is off.',rm_no:'Reminder is not available here. Install the app on the Home Screen and allow notifications, then try again.',rm_denied:'Notifications are blocked. Allow them in phone settings for this app.',rm_help:'Works once the app is installed and notifications are allowed. Only a notification subscription is stored on the server, with no name or mobile number.',bk_ok:'Backup restored. Reloading.',bk_bad:'This file is not an MVG Vani backup.',bk_q:'Restore this backup? Current notes, bookmarks and progress on this phone will be replaced.',l_none:'No lecture matches.',rd_listen:'Listen from here',
+ l_search:'Search title, verse or place',l_f_all:'All',l_f_sb:'Srimad Bhagavatam',l_f_bg:'Bhagavad-gita',l_f_raj:'Rajkot',l_f_abr:'Other places',rd_poster:'Poster from this lecture',s_backup:'Backup',bk_save:'Save backup',bk_restore:'Restore backup',bk_help:'Saves notes, bookmarks, reading and sadhana progress on this phone as one file. Login details and the AI key are not included. Restoring replaces these items on this phone.',bk_done:'Backup saved.',aud_play:'Play',aud_pause:'Pause',aud_back:'Back 15 seconds',aud_fwd:'Forward 15 seconds',aud_err:'Could not play. Check the internet connection.',aud_title:'Lecture audio',aud_help:'Plays the recording from Dropbox. Needs internet. Your place is remembered on this phone.',rm_title:'Daily sadhana reminder, 8:00 AM',rm_btn_on:'Turn on reminder',rm_btn_off:'Turn off reminder',rm_on:'Reminder is on. You will get it every morning.',rm_off:'Reminder is off.',rm_no:'Reminder is not available here. Install the app on the Home Screen and allow notifications, then try again.',rm_denied:'Notifications are blocked. Allow them in phone settings for this app.',rm_help:'Works once the app is installed and notifications are allowed. Only a notification subscription is stored on the server, with no name or mobile number.',bk_ok:'Backup restored. Reloading.',bk_bad:'This file is not an MVG Vani backup.',bk_q:'Restore this backup? Current notes, bookmarks and progress on this phone will be replaced.',l_none:'No lecture matches.',rd_listen:'Listen from here',
  x_title:'MVG Vani chat',dl_ok:'Downloaded',dl_fail:'This browser blocked the download.',
  lg_h:'Hare Krishna 🙏',lg_sub:'MVG Vani: the lectures of His Holiness Mahavishnu Goswami Maharaj',
  lg_m:'Mobile number',lg_next:'Continue',lg_priv:'Your number is kept only on this device.',
@@ -999,6 +1000,7 @@ function openSettings(){
    `<div class="grp"><span class="lab">${esc(t('s_export'))}</span><div class="seg">`+
      `<button class="pill big" data-act="xpdf">${ic('print')}<span>${esc(t('x_pdf'))}</span></button>`+
      `<button class="pill big" data-act="xdoc">${ic('down')}<span>${esc(t('x_doc'))}</span></button></div></div>`+
+   festHTML()+
    `<div class="grp"><span class="lab">${esc(t('s_backup'))}</span><div class="seg"><button class="pill big" data-act="bkdl">${ic('down')}<span>${esc(t('bk_save'))}</span></button><button class="pill big" data-act="bkup">${ic('share')}<span>${esc(t('bk_restore'))}</span></button></div><p class="help">${esc(t('bk_help'))}</p></div>`+
    `<div class="grp"><span class="lab">${esc(t('s_sites'))}</span><div class="seg">${sitesHTML()}</div></div>`+
    `<div class="grp"><span class="lab">${esc(t('s_ai'))}</span>${seg('ai',aiWanted()?1:0,[[1,t('on')],[0,t('off')]])}<p class="help">${esc(t('s_ai_help'))}</p></div>`+
@@ -1046,7 +1048,29 @@ function openLibrary(){
 }
 /* Lecture audio recorded in Dropbox (shared public links). Keyed by the lecture title in the library. */
 const AUDIO={"Never Leave the Bhagavatam Shelter": "https://www.dropbox.com/scl/fi/n0zx3juwbvqtzrc4i7e4e/SB-1.6.26-Rajkot-08-01-2005-Never-Leave-the-Bhagavatam-Shelter.mp3?rlkey=qviycushrffjd8f2f3hycj0b0&st=oik5w8t5&dl=0", "Bhagavatam Teaches us the Way to Love Krishna": "https://www.dropbox.com/scl/fi/2eermjm3uxppbm7zy49xb/SB-1.6.35-Rajkot-03-12-2004-Bhagavatam-Teaches-us-the-Way-to-Love-Krishna.mp3?rlkey=8i22d6jqrot6srqiubasyzes9&st=bvpplwfd&dl=0", "Bhagavatam is full of Common Sense": "https://www.dropbox.com/scl/fi/ib2o1z5leup8iurpogwla/SB-4.6.47-London-11-06-2008-Bhagavatam-is-full-of-Common-Sense.mp3?rlkey=9h43inh1nvjs43k82nnaiqrfp&st=dq3munev&dl=0", "Bhagavatam takes us from Complication to Simplicity": "https://www.dropbox.com/scl/fi/xf1vv0ifu0ik1uz5kjtcj/SB-1.7.4-Rajkot-16-12-2004-Bhagavatam-takes-us-from-Complication-to-Simplicity.mp3?rlkey=zkx6xlcj8yrlk7pkkjbh0ielx&st=2gc8pz1k&dl=0"};
-const audioRow=d=>{const u=AUDIO[d.t];if(!u)return '';const src=u.replace(/([?&])dl=0/,'$1raw=1');return `<div class="grp"><span class="lab">${esc(t('aud_title'))}</span><audio controls preload="none" src="${esc(src)}" style="width:100%"></audio><p class="help">${esc(t('aud_help'))}</p></div>`};
+const AUDRATE=[0.85,1,1.25,1.5];
+function audioRow(d){
+  const u=AUDIO[d.t];if(!u)return '';
+  const src=u.replace(/([?&])dl=0/,'$1raw=1');
+  return `<div class="grp aud"><span class="lab">${esc(t('aud_title'))}</span>`+
+   `<audio id="aud" preload="none" src="${esc(src)}" data-key="${esc(d.t)}"></audio>`+
+   `<div class="seg"><button class="pill" data-act="audskip" data-v="-15" aria-label="${esc(t('aud_back'))}">−15s</button>`+
+   `<button class="pill pri" data-act="audplay" id="audp">${ic('play')}<span>${esc(t('aud_play'))}</span></button>`+
+   `<button class="pill" data-act="audskip" data-v="15" aria-label="${esc(t('aud_fwd'))}">+15s</button></div>`+
+   `<div class="seg">${AUDRATE.map(r=>`<button class="pill${LS('mvg_aud_rate',1)===r?' on':''}" data-act="audrate" data-v="${r}" aria-pressed="${LS('mvg_aud_rate',1)===r}">${r}×</button>`).join('')}</div>`+
+   `<p class="help">${esc(t('aud_help'))}</p></div>`}
+function setAudBtn(on){const b=$('#audp');if(b){b.querySelector('span').textContent=t(on?'aud_pause':'aud_play');b.querySelector('svg').innerHTML=IC[on?'pause':'play']}}
+function initAudio(){
+  const a=$('#aud');if(!a)return;
+  const key=a.dataset.key;
+  a.playbackRate=+LS('mvg_aud_rate',1)||1;
+  a.addEventListener('loadedmetadata',()=>{const p=obj('mvg_aud_pos')[key];if(p>5&&a.duration&&p<a.duration-10)a.currentTime=p});
+  let last=0;
+  a.addEventListener('timeupdate',()=>{if(Date.now()-last<4000)return;last=Date.now();const p=obj('mvg_aud_pos');p[key]=Math.floor(a.currentTime);SV('mvg_aud_pos',p)});
+  a.addEventListener('play',()=>setAudBtn(true));
+  a.addEventListener('pause',()=>setAudBtn(false));
+  a.addEventListener('ended',()=>setAudBtn(false));
+}
 let RD={li:0,p:-1};
 function openReader(li,p){
   RD={li,p};const d=KB[li];
@@ -1056,7 +1080,7 @@ function openReader(li,p){
       `<button class="pill${isRead(d.t)?' on':''}" data-act="rdread" aria-pressed="${isRead(d.t)}">${ic('check')}<span>${esc(t(isRead(d.t)?'pl_isread':'pl_mark'))}</span></button>`+
       `<button class="pill" data-act="lecpost">${ic('img')}<span>${esc(t('rd_poster'))}</span></button></div><div lang="en">`+
       d.r.map((r,j)=>`<p class="${r[0]==='v'?'vs':''}${j===p?' hit':''}" data-j="${j}">${esc(r[1])}</p>`).join('')+`</div>`,
-    after:first=>{if(first){const h=$('#mb .hit');if(h)$('#mb').scrollTop=Math.max(0,h.offsetTop-$('#mb').offsetTop-70)}}});
+    after:first=>{if(first){const h=$('#mb .hit');if(h)$('#mb').scrollTop=Math.max(0,h.offsetTop-$('#mb').offsetTop-70)}initAudio()}});
 }
 function readerText(){
   const d=KB[RD.li],b=$('#mb');let from=RD.p>=0?RD.p:0;
@@ -1253,6 +1277,52 @@ async function remindOff(){
     if(sub){await fetch('./api/push',{method:'DELETE',headers:{'content-type':'application/json'},body:JSON.stringify({endpoint:sub.endpoint})});await sub.unsubscribe()}}catch(e){}
   SRAW('mvg_remind','');toast(t('rm_off'));refreshModal();
 }
+const AUDACT={
+ audplay:()=>{const a=$('#aud');if(!a)return;if(a.paused)a.play().catch(()=>toast(t('aud_err')));else a.pause()},
+ audskip:b=>{const a=$('#aud');if(!a)return;const n=a.currentTime+(+b.dataset.v);a.currentTime=Math.max(0,a.duration?Math.min(n,a.duration):n)},
+ audrate:b=>{const a=$('#aud');const r=+b.dataset.v;if(a)a.playbackRate=r;SV('mvg_aud_rate',r);$$('[data-act="audrate"]').forEach(x=>{const on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on)})}
+};
+
+/* Festival updates: an inline switch in Settings. Consent text is shown only when switched on. */
+const FESTX={
+ en:{t:'Festival invitations and posters',c:'Send me festival invitations, posters and important temple updates on this mobile number. It is not shared with anyone. You can stop any time.',n:'Mobile number',a:'I agree to this',s:'Save',x:'Cancel',on:'On',off:'Off',stop:'Stop updates',ok:'Saved. Thank you.',ok2:'Updates stopped.',bad:'Please enter a valid 10-digit mobile number and tick “I agree”.',err:'Could not save now. Please try again later.'},
+ hi:{t:'उत्सव निमंत्रण और पोस्टर',c:'मुझे इसी मोबाइल नंबर पर उत्सव निमंत्रण, पोस्टर और ज़रूरी मंदिर सूचना भेजें। यह किसी और को नहीं दिया जाएगा। कभी भी बंद कर सकते हैं।',n:'मोबाइल नंबर',a:'मैं सहमत हूँ',s:'सेव करें',x:'रद्द करें',on:'चालू',off:'बंद',stop:'Updates बंद करें',ok:'सेव हो गया। धन्यवाद।',ok2:'Updates बंद हो गए।',bad:'कृपया 10 अंकों का सही मोबाइल नंबर लिखें और “मैं सहमत हूँ” चुनें।',err:'अभी सेव नहीं हो सका। बाद में फिर कोशिश करें।'}
+};
+const fx=k=>(FESTX[lang]||FESTX.en)[k]||FESTX.en[k];
+let FEST_OPEN=false;
+const festMobile=()=>String(LS('mvg_fest','')||'');
+function festHTML(){
+  const on=!!festMobile();
+  let inner;
+  if(on)inner=`<div class="seg"><span class="pill on">${ic('check')}<span>${esc(fx('on'))}</span></span><button class="pill" data-act="festoff">${esc(fx('stop'))}</button></div>`;
+  else if(FEST_OPEN)inner=`<div class="fest"><p class="help">${esc(fx('c'))}</p>`+
+    `<label class="lab" for="fmob">${esc(fx('n'))}</label><input class="in" id="fmob" inputmode="numeric" maxlength="13" autocomplete="tel" value="${esc(RAW('mvg_user_mobile'))}">`+
+    `<label class="chk"><input type="checkbox" id="fagree"> <span>${esc(fx('a'))}</span></label>`+
+    `<div class="seg"><button class="pill pri" data-act="festsave">${esc(fx('s'))}</button><button class="pill" data-act="festclose">${esc(fx('x'))}</button></div></div>`;
+  else inner=`<div class="seg"><button class="pill" data-act="festopen" aria-pressed="false">${ic('plus')}<span>${esc(fx('off'))}</span></button></div>`;
+  return `<div class="grp"><span class="lab">${esc(fx('t'))}</span>${inner}</div>`;
+}
+async function festSave(){
+  const m=(($('#fmob')||{}).value||'').replace(/\D/g,'').replace(/^91(?=\d{10}$)/,'');
+  const agree=!!(($('#fagree')||{}).checked);
+  if(!/^[6-9]\d{9}$/.test(m)||!agree){toast(fx('bad'));return}
+  try{
+    const r=await fetch('./api/optin',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({mobile:m,lang,consent:true})});
+    if(!r.ok)throw new Error('save');
+    SV('mvg_fest',m);FEST_OPEN=false;toast(fx('ok'));refreshModal();
+  }catch(e){toast(fx('err'))}
+}
+async function festOff(){
+  const m=festMobile();
+  try{if(m)await fetch('./api/optin',{method:'DELETE',headers:{'content-type':'application/json'},body:JSON.stringify({mobile:m})})}catch(e){}
+  SRAW('mvg_fest','');toast(fx('ok2'));refreshModal();
+}
+const FESTACT={
+ festopen:()=>{FEST_OPEN=true;refreshModal()},
+ festclose:()=>{FEST_OPEN=false;refreshModal()},
+ festsave:festSave, festoff:festOff
+};
+
 const BK_KEYS=['mvg_chat_history','mvg_bookmarks','mvg_chat_start','mvg_lang','mvg_fs','mvg_rate','mvg_theme','mvg_plan','mvg_sadhana','mvg_notes','mvg_kb_custom','mvg_ai','mvg_seen','mvg_addr'];
 function backupDownload(){
   const data={};BK_KEYS.forEach(k=>{const v=RAW(k);if(v)data[k]=v});
@@ -1278,6 +1348,7 @@ const ACT={
  theme:()=>{const dark=document.documentElement.dataset.theme?document.documentElement.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;SV('mvg_theme',dark?'light':'dark');applyTheme()},
  lfilt:b=>{LF=b.dataset.v;$('#libF').innerHTML=lfChips();$('#libL').innerHTML=libList($('#libQ').value)},
  lecpost:()=>openLecPoster(RD.li),
+ ...AUDACT, ...FESTACT,
  remindon:remindOn, remindoff:remindOff,
  bkdl:backupDownload, bkup:backupPick,
  marks:openMarks, settings:openSettings, close:closeModal, lib:openLibrary,
