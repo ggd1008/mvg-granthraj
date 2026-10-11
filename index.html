@@ -245,6 +245,7 @@ a.pill{text-decoration:none;color:var(--t)}
   @page{margin:16mm}
 }
 .chk{display:flex;gap:10px;align-items:center;margin:10px 0;font-weight:600}.chk input{width:22px;height:22px}.fest .in{margin:6px 0 10px}.aud .seg{margin-top:8px}
+.tts-off{opacity:.45;cursor:not-allowed;pointer-events:none}
 </style>
 </head>
 <body>
@@ -445,7 +446,7 @@ en:{brand:'MVG Vani',sub:'Maharaj’s vani, at your service',
  b_empty:'No bookmarks yet. Tap Save under any answer.',you:'You',
  n_q:'Start a new chat? Bookmarked answers stay saved.',
  p_title:'Poster for devotees',p_text:'Maharaj’s words on the poster',p_sq:'Square',p_st:'Story',p_bn:'Banner',p_dl:'Download PNG',p_share:'Share',p_pass:'Passage',p_empty:'Write some text for the poster.',p_size:'Size',p_fill:'Fill with',p_photo:'Maharaj’s photo on top',p_photo_on:'Photo on',p_photo_off:'Photo off',
- l_search:'Search title, verse or place',l_f_all:'All',l_f_aud:'With audio',l_f_sb:'Srimad Bhagavatam',l_f_bg:'Bhagavad-gita',l_f_raj:'Rajkot',l_f_abr:'Other places',rd_poster:'Poster from this lecture',s_backup:'Backup',bk_save:'Save backup',bk_restore:'Restore backup',bk_help:'Saves notes, bookmarks, reading and sadhana progress on this phone as one file. Login details and the AI key are not included. Restoring replaces these items on this phone.',bk_done:'Backup saved.',aud_play:'Play',aud_pause:'Pause',aud_back:'Back 15 seconds',aud_fwd:'Forward 15 seconds',aud_err:'Could not play. Check the internet connection.',aud_title:'Lecture audio',aud_help:'Plays the recording from Dropbox. Needs internet. Your place is remembered on this phone.',rm_title:'Daily sadhana reminder, 8:00 AM',rm_btn_on:'Turn on reminder',rm_btn_off:'Turn off reminder',rm_on:'Reminder is on. You will get it every morning.',rm_off:'Reminder is off.',rm_no:'Reminder is not available here. Install the app on the Home Screen and allow notifications, then try again.',rm_denied:'Notifications are blocked. Allow them in phone settings for this app.',rm_help:'Works once the app is installed and notifications are allowed. Only a notification subscription is stored on the server, with no name or mobile number.',bk_ok:'Backup restored. Reloading.',bk_bad:'This file is not an MVG Vani backup.',bk_q:'Restore this backup? Current notes, bookmarks and progress on this phone will be replaced.',l_none:'No lecture matches.',rd_listen:'Listen from here',
+ l_search:'Search title, verse or place',l_f_all:'All',l_f_aud:'With audio',l_f_sb:'Srimad Bhagavatam',l_f_bg:'Bhagavad-gita',l_f_raj:'Rajkot',l_f_abr:'Other places',rd_poster:'Poster from this lecture',s_backup:'Backup',bk_save:'Save backup',bk_restore:'Restore backup',bk_help:'Saves notes, bookmarks, reading and sadhana progress on this phone as one file. Login details and the AI key are not included. Restoring replaces these items on this phone.',bk_done:'Backup saved.',tts_off:'Coming soon',aud_play:'Play',aud_pause:'Pause',aud_back:'Back 15 seconds',aud_fwd:'Forward 15 seconds',aud_err:'Could not play. Check the internet connection.',aud_title:'Lecture audio',aud_help:'Plays the recording from Dropbox. Needs internet. Your place is remembered on this phone.',rm_title:'Daily sadhana reminder, 8:00 AM',rm_btn_on:'Turn on reminder',rm_btn_off:'Turn off reminder',rm_on:'Reminder is on. You will get it every morning.',rm_off:'Reminder is off.',rm_no:'Reminder is not available here. Install the app on the Home Screen and allow notifications, then try again.',rm_denied:'Notifications are blocked. Allow them in phone settings for this app.',rm_help:'Works once the app is installed and notifications are allowed. Only a notification subscription is stored on the server, with no name or mobile number.',bk_ok:'Backup restored. Reloading.',bk_bad:'This file is not an MVG Vani backup.',bk_q:'Restore this backup? Current notes, bookmarks and progress on this phone will be replaced.',l_none:'No lecture matches.',rd_listen:'Listen from here',
  x_title:'MVG Vani chat',dl_ok:'Downloaded',dl_fail:'This browser blocked the download.',
  lg_h:'Hare Krishna 🙏',lg_sub:'MVG Vani: the lectures of His Holiness Mahavishnu Goswami Maharaj',
  lg_m:'Mobile number',lg_next:'Continue',lg_priv:'Your number is kept only on this device.',
@@ -847,7 +848,7 @@ function partsText(m,forSpeech){
 function actsHTML(i){
   const on=marks.indexOf(i)>=0,id='m'+i;
   return `<div class="acts">`+
-   `<button class="pill" data-act="tts" data-id="${id}" data-i="${i}">${ic('play')}<span>${esc(t('listen'))}</span></button>`+
+   `<button class="pill tts-off" data-act="tts" data-id="${id}" data-i="${i}" disabled aria-disabled="true" title="${esc(t('tts_off'))}">${ic('play')}<span>${esc(t('listen'))}</span></button>`+
    `<button class="pill" data-act="ttsstop" data-stop="${id}" hidden>${ic('stop')}<span>${esc(t('stop'))}</span></button>`+
    `<button class="pill" data-act="poster" data-i="${i}">${ic('img')}<span>${esc(t('poster'))}</span></button>`+
    `<button class="pill" data-act="notes" data-i="${i}">${ic('note')}<span>${esc(t('notes'))}</span></button>`+
@@ -935,6 +936,7 @@ async function send(text,pin){
    READ ALOUD (Web Speech API)
    ===================================================================== */
 const TTS={q:[],i:0,id:null,state:'idle',cur:null};
+const TTS_OFF=true;   // reading by system voice is paused until the temple authorities approve it; buttons stay visible but disabled
 const IAST={'ā':'a','ī':'i','ū':'u','ṛ':'ri','ṝ':'ri','ḷ':'l','ṅ':'n','ñ':'n','ṭ':'t','ḍ':'d','ṇ':'n','ś':'sh','ṣ':'sh','ṁ':'m','ṃ':'m','ḥ':'h','Ā':'A','Ī':'I','Ū':'U','Ṛ':'Ri','Ś':'Sh','Ṣ':'Sh','Ṭ':'T','Ḍ':'D','Ṇ':'N','Ñ':'N'};
 function ttsClean(s){
   return s.replace(/[\u{1F000}-\u{1FAFF}\u2600-\u27BF\uFE0F]/gu,'').replace(/[“”"«»]/g,'').replace(/[āīūṛṝḷṅñṭḍṇśṣṁṃḥĀĪŪṚŚṢṬḌṆÑ]/g,c=>IAST[c]||c)
@@ -1075,7 +1077,7 @@ let RD={li:0,p:-1};
 function openReader(li,p){
   RD={li,p};const d=KB[li];
   openModal({cls:'rd',title:()=>`${esc(d.t)}<small>${esc(refLine(d))}</small>`,
-    body:()=>audioRow(d)+`<div class="acts"><button class="pill" data-act="tts" data-id="reader" data-lab="rd_listen">${ic('play')}<span>${esc(t('rd_listen'))}</span></button>`+
+    body:()=>audioRow(d)+`<div class="acts"><button class="pill tts-off" data-act="tts" data-id="reader" data-lab="rd_listen" disabled aria-disabled="true" title="${esc(t('tts_off'))}">${ic('play')}<span>${esc(t('rd_listen'))}</span></button>`+
       `<button class="pill" data-act="ttsstop" data-stop="reader" hidden>${ic('stop')}<span>${esc(t('stop'))}</span></button>`+
       `<button class="pill${isRead(d.t)?' on':''}" data-act="rdread" aria-pressed="${isRead(d.t)}">${ic('check')}<span>${esc(t(isRead(d.t)?'pl_isread':'pl_mark'))}</span></button>`+
       `<button class="pill" data-act="lecpost">${ic('img')}<span>${esc(t('rd_poster'))}</span></button></div><div lang="en">`+
@@ -1356,7 +1358,7 @@ const ACT={
  new:()=>{if(hist.length>start)confirmModal(t('n_q'),t('newchat'),'newyes')},
  newyes:newChat,
  read:b=>openReader(+b.dataset.li,+b.dataset.p),
- tts:b=>{const id=b.dataset.id;ttsToggle(id,id==='reader'?readerText:()=>partsText(hist[+b.dataset.i],true))},
+ tts:b=>{if(TTS_OFF)return;const id=b.dataset.id;ttsToggle(id,id==='reader'?readerText:()=>partsText(hist[+b.dataset.i],true))},
  ttsstop:ttsStop,
  mark:b=>{const i=+b.dataset.i,k=marks.indexOf(i);if(k<0)marks.push(i);else marks.splice(k,1);SV('mvg_bookmarks',marks);markDot();toast(t(k<0?'saved':'unsaved'));
    $$('[data-act="mark"][data-i="'+i+'"]').forEach(x=>{x.classList.toggle('on',k<0);x.setAttribute('aria-pressed',k<0);x.lastElementChild.textContent=t(k<0?'saved':'save')});
